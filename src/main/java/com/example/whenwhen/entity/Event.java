@@ -35,7 +35,7 @@ public class Event {
     private Status status; // 이벤트 상태
 
     public enum Status {
-        ACTIVE, COMPLETED;
+        ACTIVE, COMPLETED
     }
 
     @Column(name = "created_at", updatable = false)
