@@ -8,10 +8,6 @@ import com.example.whenwhen.repository.EventRepository;
 import com.example.whenwhen.util.CodeGenerator;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class EventService {
 
