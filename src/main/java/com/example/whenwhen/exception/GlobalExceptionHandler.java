@@ -29,9 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponseWrapper<Map<String, String>>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
-            errors.put(error.getField(), error.getDefaultMessage());
-        });
+        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
         ApiResponseWrapper<Map<String, String>> response = ApiResponseWrapper.<Map<String, String>>builder()
                 .success(false)
@@ -42,7 +40,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // 그 외의 일반적인 예외 처리
+    // General Exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseWrapper<Void>> handleGenericException(Exception ex) {
         ApiResponseWrapper<Void> response = ApiResponseWrapper.<Void>builder()
