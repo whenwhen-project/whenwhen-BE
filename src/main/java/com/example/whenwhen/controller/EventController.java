@@ -58,11 +58,10 @@ public class EventController {
     public ResponseEntity<?> createEvent(@RequestBody @Valid EventRequestDto requestDto) {
         EventResponseDto eventResponseDto = eventService.createEvent(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                Map.of(
-                        "success", true,
-                        "message", "Event created successfully.",
-                        "data", eventResponseDto
-                )
+                ApiResponseWrapper.<EventResponseDto>builder()
+                        .success(true)
+                        .message("Event created successfully.")
+                        .data(eventResponseDto)
         );
     }
 
