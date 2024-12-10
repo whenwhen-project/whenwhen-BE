@@ -34,8 +34,13 @@ public class EventController {
                     @ApiResponse(
                             responseCode = "201",
                             description = "이벤트 생성 성공",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ApiResponseWrapper.class))
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ApiResponseWrapper.class,
+                                            subTypes = {EventResponseDto.class}
+                                    )
+                            )
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -74,8 +79,13 @@ public class EventController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "이벤트 세부 정보 검색 성공",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ApiResponseWrapper.class))
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ApiResponseWrapper.class,
+                                            subTypes = {EventResponseDto.class}
+                                    )
+                            )
                     ),
                     @ApiResponse(
                             responseCode = "404",
