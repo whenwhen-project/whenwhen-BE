@@ -32,12 +32,22 @@ public class Event {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status = Status.ACTIVE; // 이벤트 상태
+    private Status status; // 이벤트 상태
 
     public enum Status {
         ACTIVE, COMPLETED
     }
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();  // 생성 시간
+    private LocalDateTime createdAt;  // 생성 시간
+
+    @PrePersist
+    public void prePersist() {
+        if (status == null) {
+            status = Status.ACTIVE;
+        }
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 }
