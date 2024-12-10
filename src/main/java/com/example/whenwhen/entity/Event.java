@@ -32,7 +32,7 @@ public class Event {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status; // 이벤트 상태
+    private Status status = Status.ACTIVE; // 이벤트 상태
 
     public enum Status {
         ACTIVE, COMPLETED
