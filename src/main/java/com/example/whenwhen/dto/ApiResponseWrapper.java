@@ -15,6 +15,6 @@ public class ApiResponseWrapper<T> {
     @Schema(description = "응답 메시지", example = "Event created successfully.")
     private String message;
 
-    @Schema(description = "응답 데이터")
+    @Schema(description = "응답 데이터", implementation = EventResponseDto.class)
     private T data;
 }
