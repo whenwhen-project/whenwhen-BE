@@ -40,15 +40,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // General Exception
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponseWrapper<Void>> handleGenericException(Exception ex) {
-        ApiResponseWrapper<Void> response = ApiResponseWrapper.<Void>builder()
-                .success(false)
-                .message("An unexpected error occurred: " + ex.getMessage())
-                .data(null)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }
