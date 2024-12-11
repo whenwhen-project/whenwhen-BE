@@ -23,10 +23,10 @@ public class Event {
     @Column(unique = true, nullable = false)
     private String code;  // 초대 코드
 
-    @Column(name = "start_hour", nullable = false)
+    @Column(nullable = false)
     private int startHour;  // 일별 시작 시간
 
-    @Column(name = "end_hour", nullable = false)
+    @Column(nullable = false)
     private int endHour;  // 일별 종료 시간
 
 
@@ -38,16 +38,16 @@ public class Event {
         ACTIVE, COMPLETED
     }
 
-    @Column(name = "created_at", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime createdAt;  // 생성 시간
 
     @PrePersist
-    public void prePersist() {
-        if (status == null) {
-            status = Status.ACTIVE;
+    public void onCreate() {
+        if (this.status == null) {
+            this.status = Status.ACTIVE;
         }
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
         }
     }
 }
