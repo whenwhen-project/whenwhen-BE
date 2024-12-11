@@ -3,7 +3,7 @@ package com.example.whenwhen.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "events")
@@ -39,7 +39,7 @@ public class Event {
     }
 
     @Column(updatable = false)
-    private LocalDateTime createdAt;  // 생성 시간
+    private Instant createdAt;  // 생성 시간
 
     @PrePersist
     public void onCreate() {
@@ -47,7 +47,7 @@ public class Event {
             this.status = Status.ACTIVE;
         }
         if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
+            this.createdAt = Instant.now();
         }
     }
 }
