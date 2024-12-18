@@ -8,14 +8,13 @@ import java.time.Instant;
 @Entity
 @Table(name = "events")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // 기본 키
+    private Long id;  // PK
 
     @Column(nullable = false)
     private String title;  // 이벤트 제목
