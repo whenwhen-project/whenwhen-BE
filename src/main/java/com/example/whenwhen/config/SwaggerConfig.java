@@ -14,8 +14,6 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("WhenWhen API Documentation")
-                        .version("v1")
-                        .description("API documentation for WhenWhen project")
-                        .license(new License().name("Apache 2.0").url("http://springdoc.org")));
+                        .version("v1"));
     }
 }

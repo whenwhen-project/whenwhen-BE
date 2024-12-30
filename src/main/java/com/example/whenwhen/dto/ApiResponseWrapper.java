@@ -3,9 +3,10 @@ package com.example.whenwhen.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
 @Builder
+@Data
 @Schema(description = "API 공통 응답 형식")
 public class ApiResponseWrapper<T> {
 
@@ -15,6 +16,9 @@ public class ApiResponseWrapper<T> {
     @Schema(description = "응답 메시지", example = "Event created successfully.")
     private String message;
 
-    @Schema(description = "응답 데이터", implementation = EventResponseDto.class)
+    @Schema(description = "응답 데이터")
     private T data;
+
+    @Schema(description = "오류 코드")
+    private String errorCode;
 }

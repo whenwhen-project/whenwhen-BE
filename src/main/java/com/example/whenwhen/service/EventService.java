@@ -3,7 +3,7 @@ package com.example.whenwhen.service;
 import com.example.whenwhen.dto.EventRequestDto;
 import com.example.whenwhen.dto.EventResponseDto;
 import com.example.whenwhen.entity.Event;
-import com.example.whenwhen.exception.EventNotFoundException;
+import com.example.whenwhen.exception.EntityNotFoundException;
 import com.example.whenwhen.repository.EventRepository;
 import com.example.whenwhen.util.CodeGenerator;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,6 @@ public class EventService {
 
     // 이벤트 생성
     public EventResponseDto createEvent(EventRequestDto requestDto) {
-        // 랜덤 코드 생성
         String randomCode;
         do {
             randomCode = CodeGenerator.generateRandomCode();
@@ -46,7 +45,7 @@ public class EventService {
     // 코드로 이벤트 조회
     public EventResponseDto getEventByCode(String code) {
         Event event = eventRepository.findByCode(code)
-                .orElseThrow(() -> new EventNotFoundException("Event not found with code: " + code));
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with code: " + code));
 
         return EventResponseDto.builder()
                 .title(event.getTitle())
