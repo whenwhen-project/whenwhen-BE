@@ -15,51 +15,24 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public interface EventControllerDocs {
 
     @Operation(
-            summary = "Create a new event",
+            summary = "새 이벤트 생성",
             responses = {
                     @ApiResponse(
                             responseCode = "201",
                             description = "이벤트 생성 성공",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(
-                                            implementation = ApiResponseWrapper.class,
-                                            subTypes = {EventResponseDto.class}
-                                    )
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "유효성 검증 실패",
-                            content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                "success": false,
-                                                "error": {
-                                                    "code": "VALIDATION_ERROR",
-                                                    "message": "Invalid input data"
-                                                }
-                                            }
-                                            """))
+                            useReturnTypeSchema = true
                     )
             }
     )
     ResponseEntity<?> createEvent(EventRequestDto requestDto);
 
     @Operation(
-            summary = "Retrieve event by code",
-            description = "이벤트 코드를 사용하여 이벤트 세부 정보를 검색합니다.",
+            summary = "이벤트 코드로 이벤트 세부 정보 검색",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "이벤트 세부 정보 검색 성공",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(
-                                            implementation = ApiResponseWrapper.class,
-                                            subTypes = {EventResponseDto.class}
-                                    )
-                            )
+                            useReturnTypeSchema = true
                     ),
                     @ApiResponse(
                             responseCode = "404",

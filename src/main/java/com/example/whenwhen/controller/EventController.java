@@ -5,6 +5,7 @@ import com.example.whenwhen.dto.ApiResponseWrapper;
 import com.example.whenwhen.dto.EventRequestDto;
 import com.example.whenwhen.dto.EventResponseDto;
 import com.example.whenwhen.service.EventService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,17 +13,14 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/events")
+@RequiredArgsConstructor
 public class EventController implements EventControllerDocs {
 
     private final EventService eventService;
 
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
-    }
-
     @Override
     @PostMapping
-    public ResponseEntity<?> createEvent(@RequestBody @Valid EventRequestDto requestDto) {
+    public ResponseEntity<ApiResponseWrapper<EventResponseDto>> createEvent(@RequestBody @Valid EventRequestDto requestDto) {
         EventResponseDto eventResponseDto = eventService.createEvent(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponseWrapper.<EventResponseDto>builder()
@@ -35,7 +33,7 @@ public class EventController implements EventControllerDocs {
 
     @Override
     @GetMapping("/{eventCode}")
-    public ResponseEntity<?> getEventByCode(@PathVariable String eventCode) {
+    public ResponseEntity<ApiResponseWrapper<EventResponseDto>> getEventByCode(@PathVariable String eventCode) {
         EventResponseDto eventResponseDto = eventService.getEventByCode(eventCode);
         return ResponseEntity.ok().body(
                 ApiResponseWrapper.<EventResponseDto>builder()
