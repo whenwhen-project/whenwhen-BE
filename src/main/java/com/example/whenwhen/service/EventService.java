@@ -6,16 +6,14 @@ import com.example.whenwhen.entity.Event;
 import com.example.whenwhen.exception.EntityNotFoundException;
 import com.example.whenwhen.repository.EventRepository;
 import com.example.whenwhen.util.CodeGenerator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class EventService {
 
     private final EventRepository eventRepository;
-
-    public EventService(EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
-    }
 
     // 이벤트 생성
     public EventResponseDto createEvent(EventRequestDto requestDto) {
