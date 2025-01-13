@@ -33,7 +33,7 @@ public class AuthService {
         Map<String, Object> kakaoAccessToken = kakaoAuthProvider.getKakaoToken(code);
         String idToken = (String) kakaoAccessToken.get("id_token");
 
-        // 2. 카카오 사용자 정보 조회
+        // 2. 카카오 액세스 토큰 내 ID token에서 사용자 정보를 decode
         Map<String, Object> userInfo = kakaoAuthProvider.decodeIdTokenToUserInfo(idToken);
 
         String sub = (String) userInfo.get("sub");
