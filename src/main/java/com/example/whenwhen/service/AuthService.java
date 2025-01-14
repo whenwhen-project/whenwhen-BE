@@ -1,6 +1,5 @@
 package com.example.whenwhen.service;
 
-import com.example.whenwhen.dto.ApiResponseWrapper;
 import com.example.whenwhen.dto.LoginResponseDto;
 import com.example.whenwhen.entity.RefreshToken;
 import com.example.whenwhen.entity.User;
@@ -8,8 +7,6 @@ import com.example.whenwhen.repository.RefreshTokenRepository;
 import com.example.whenwhen.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

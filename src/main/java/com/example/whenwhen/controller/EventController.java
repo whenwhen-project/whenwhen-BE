@@ -5,11 +5,11 @@ import com.example.whenwhen.dto.ApiResponseWrapper;
 import com.example.whenwhen.dto.EventRequestDto;
 import com.example.whenwhen.dto.EventResponseDto;
 import com.example.whenwhen.service.EventService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/events")
