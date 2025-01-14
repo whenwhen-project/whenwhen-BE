@@ -11,7 +11,7 @@ import com.example.whenwhen.util.CodeGenerator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
