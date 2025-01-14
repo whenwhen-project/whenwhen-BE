@@ -3,21 +3,27 @@ package com.example.whenwhen.service;
 import com.example.whenwhen.dto.EventRequestDto;
 import com.example.whenwhen.dto.EventResponseDto;
 import com.example.whenwhen.entity.Event;
+import com.example.whenwhen.entity.EventDate;
 import com.example.whenwhen.exception.EntityNotFoundException;
+import com.example.whenwhen.repository.EventDateRepository;
 import com.example.whenwhen.repository.EventRepository;
 import com.example.whenwhen.util.CodeGenerator;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class EventService {
 
     private final EventRepository eventRepository;
-
-    public EventService(EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
-    }
+    private final EventDateRepository eventDateRepository;
 
     // 이벤트 생성
+    @Transactional
     public EventResponseDto createEvent(EventRequestDto requestDto) {
         String randomCode;
         do {
@@ -30,14 +36,19 @@ public class EventService {
                 .startHour(requestDto.getStartHour())
                 .endHour(requestDto.getEndHour())
                 .build();
-
         Event savedEvent = eventRepository.save(event);
+
+        List<EventDate> savedEventDates = requestDto.getDates().stream()
+                .map(localDate -> EventDate.builder().date(localDate).event(event).build())
+                .map(eventDateRepository::save)
+                .toList();
 
         return EventResponseDto.builder()
                 .title(savedEvent.getTitle())
                 .code(savedEvent.getCode())
                 .startHour(savedEvent.getStartHour())
                 .endHour(savedEvent.getEndHour())
+                .dates(savedEventDates.stream().map(EventDate::getDate).toList())
                 .status(savedEvent.getStatus().name())
                 .build();
     }
