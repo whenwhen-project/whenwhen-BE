@@ -38,6 +38,9 @@ public class User {
         }
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<RefreshToken> refreshTokens = new ArrayList<>(); // 유저 소유 토큰 배열
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
 }

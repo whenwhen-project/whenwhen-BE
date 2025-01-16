@@ -1,5 +1,6 @@
 package com.example.whenwhen.entity;
 
+import com.example.whenwhen.enums.EventStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,11 +37,7 @@ public class Event {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status; // 이벤트 상태
-
-    public enum Status {
-        ACTIVE, COMPLETED
-    }
+    private EventStatus status;  // 이벤트 상태
 
     @Column(updatable = false)
     private Instant createdAt;  // 생성 시간
@@ -48,7 +45,7 @@ public class Event {
     @PrePersist
     public void onCreate() {
         if (this.status == null) {
-            this.status = Status.ACTIVE;
+            this.status = EventStatus.ACTIVE;
         }
         if (this.createdAt == null) {
             this.createdAt = Instant.now();
@@ -57,4 +54,7 @@ public class Event {
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventDate> eventDates = new ArrayList<>();
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
 }
