@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByCode(String code);
+    Boolean existsByCode(String code);
 }

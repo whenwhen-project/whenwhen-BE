@@ -4,6 +4,7 @@ import com.example.whenwhen.dto.EventRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -34,16 +35,7 @@ public interface EventControllerDocs {
                     @ApiResponse(
                             responseCode = "404",
                             description = "이벤트를 찾을 수 없음",
-                            content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = """
-                                            {
-                                              "success": false,
-                                              "error": {
-                                                "code": "EVENT_CODE_NOT_EXISTS",
-                                                "message": "존재하지 않는 이벤트 코드입니다."
-                                              }
-                                            }
-                                            """))
+                            content = @Content(schema = @Schema(hidden = true))
                     )
             }
     )
