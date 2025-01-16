@@ -17,7 +17,4 @@ public class ApiResponseWrapper<T> {
 
     @Schema(description = "응답 데이터")
     private T data;
-
-    @Schema(description = "오류 코드")
-    private String errorCode;
 }
