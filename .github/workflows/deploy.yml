@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main  # main 브랜치에 푸시할 때 실행
+      - feat/deploy
 
 jobs:
   build-and-deploy:
@@ -45,7 +46,7 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
-          envs: ENV_CONTENT
+          envs: .env
           script: |
             cat << 'EOF' > .env
             ${{ secrets.ENV_FILE }}
