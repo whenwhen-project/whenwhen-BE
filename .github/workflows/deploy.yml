@@ -14,14 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # dotenv 설치 및 로드
-      - name: Load environment variables
-        run: |
-          cat << 'EOF' > .env
-          ${{ secrets.ENV_FILE }}
-          EOF
-          export $(cat .env | xargs)
-          echo "DOCKER_USERNAME=$DOCKER_USERNAME"
+      # .env 파일 생성
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
 
       # JDK 설정
       - name: ☕️ set up JDK 21
@@ -34,14 +29,11 @@ jobs:
       - name: Build JAR File
         run: |
           mvn clean package -DskipTests
-        env:
-          SPRING_DATASOURCE_URL: $SPRING_DATASOURCE_URL
-          SPRING_DATASOURCE_USERNAME: $SPRING_DATASOURCE_USERNAME
-          SPRING_DATASOURCE_PASSWORD: $SPRING_DATASOURCE_PASSWORD
 
       # Docker 이미지 빌드 및 푸시
       - name: Build and Push Docker Image
         run: |
+          export $(cat .env | xargs)
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           docker build -t $DOCKER_USERNAME/whenwhen:latest .
           docker push $DOCKER_USERNAME/whenwhen:latest
@@ -49,11 +41,13 @@ jobs:
       # EC2에 배포
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
+        env:
+          ENV_CONTENT: ${{ secrets.ENV_FILE }}
         with:
-          host: $EC2_HOST
-          username: $EC2_USER
-          key: $EC2_KEY
+          envs: ENV_CONTENT
           script: |
+            echo "$ENV_CONTENT" > .env
+            export $(cat .env | xargs)
             sudo docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
             sudo docker pull $DOCKER_USERNAME/whenwhen:latest
             sudo docker stop whenwhen-container || true
