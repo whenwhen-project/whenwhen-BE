@@ -21,7 +21,6 @@ jobs:
           cat << 'EOF' > .env
           ${{ secrets.ENV_FILE }}
           EOF
-          source .env
 
         # JDK 설정
       - name: ☕️ set up JDK 21
@@ -38,6 +37,7 @@ jobs:
       # Docker 이미지 빌드 및 푸시
       - name: Build and Push Docker Image
         run: |
+          source .env
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           docker build -t $DOCKER_USERNAME/whenwhen:latest .
           docker push $DOCKER_USERNAME/whenwhen:latest
@@ -46,7 +46,9 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
-          envs: .env
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             cat << 'EOF' > .env
             ${{ secrets.ENV_FILE }}
@@ -60,3 +62,4 @@ jobs:
               --name whenwhen-container \
               --env-file .env \
               "$DOCKER_USERNAME/whenwhen:latest"
+            rm -f .env
