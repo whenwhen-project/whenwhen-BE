@@ -14,18 +14,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # .env 파일 생성
-      - name: Load .env from GitHub Secrets
+      # dotenv 설치 및 로드
+      - name: Load environment variables
         run: |
           cat << 'EOF' > .env
           ${{ secrets.ENV_FILE }}
           EOF
-
-      # dotenv 설치 및 로드
-      - name: Load environment variables
-        run: |
-          curl -sSL https://install.dotenv.dev | sh
-          source .env
+          export $(cat .env | xargs)
 
       # JDK 설정
       - name: ☕️ set up JDK 21
