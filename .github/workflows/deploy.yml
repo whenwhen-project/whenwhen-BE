@@ -47,7 +47,9 @@ jobs:
         with:
           envs: ENV_CONTENT
           script: |
-            echo "${{ secrets.ENV_FILE }}" > .env
+            cat << 'EOF' > .env
+            ${{ secrets.ENV_FILE }}
+            EOF
             source .env
             sudo docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
             sudo docker pull $DOCKER_USERNAME/whenwhen:latest
