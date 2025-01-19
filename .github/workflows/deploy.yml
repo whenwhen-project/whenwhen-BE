@@ -21,6 +21,7 @@ jobs:
           ${{ secrets.ENV_FILE }}
           EOF
           export $(cat .env | xargs)
+          echo "DOCKER_USERNAME=$DOCKER_USERNAME"
 
       # JDK 설정
       - name: ☕️ set up JDK 21
