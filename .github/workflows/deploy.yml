@@ -16,11 +16,12 @@ jobs:
 
       # .env 파일 생성
       - name: Create .env file
-        run: | 
-          echo "${{ secrets.ENV_FILE }}" > .env
-          source .env
+        run: |
+          cat << 'EOF' > .env
+          ${{ secrets.ENV_FILE }}
+          EOF
 
-      # JDK 설정
+        # JDK 설정
       - name: ☕️ set up JDK 21
         uses: actions/setup-java@v4
         with:
