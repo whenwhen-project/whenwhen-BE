@@ -47,8 +47,8 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-          docker build -t "$DOCKER_USERNAME/whenwhen:latest" .
-          docker push "$DOCKER_USERNAME/whenwhen:latest"
+          docker build -t $DOCKER_USERNAME/whenwhen:latest .
+          docker push $DOCKER_USERNAME/whenwhen:latest
 
       # EC2에 배포
       - name: Deploy to EC2
@@ -59,7 +59,7 @@ jobs:
           key: $EC2_KEY
           script: |
             sudo docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-            sudo docker pull "$DOCKER_USERNAME/whenwhen:latest"
+            sudo docker pull $DOCKER_USERNAME/whenwhen:latest
             sudo docker stop whenwhen-container || true
             sudo docker rm whenwhen-container || true
             sudo docker run -d \
