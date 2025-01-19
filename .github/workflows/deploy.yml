@@ -53,10 +53,11 @@ jobs:
             cat << 'EOF' > .env
             ${{ secrets.ENV_FILE }}
             EOF
+            source .env
             sudo docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
             sudo docker pull $DOCKER_USERNAME/whenwhen:latest
-            sudo docker stop whenwhen-container || true
-            sudo docker rm whenwhen-container || true
+            sudo docker stop whenwhen-container
+            sudo docker rm whenwhen-container
             sudo docker run -d \
               -p 8080:8080 \
               --name whenwhen-container \
