@@ -15,12 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # .env 파일 생성
+      # .env 파일 생성 및 로드
       - name: Create .env file
         run: |
           cat << 'EOF' > .env
           ${{ secrets.ENV_FILE }}
           EOF
+          source .env
 
         # JDK 설정
       - name: ☕️ set up JDK 21
@@ -37,7 +38,6 @@ jobs:
       # Docker 이미지 빌드 및 푸시
       - name: Build and Push Docker Image
         run: |
-          source .env
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           docker build -t $DOCKER_USERNAME/whenwhen:latest .
           docker push $DOCKER_USERNAME/whenwhen:latest
@@ -51,7 +51,6 @@ jobs:
             cat << 'EOF' > .env
             ${{ secrets.ENV_FILE }}
             EOF
-            source .env
             sudo docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
             sudo docker pull $DOCKER_USERNAME/whenwhen:latest
             sudo docker stop whenwhen-container || true
