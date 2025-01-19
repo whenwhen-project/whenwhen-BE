@@ -37,7 +37,6 @@ jobs:
       # Docker 이미지 빌드 및 푸시
       - name: Build and Push Docker Image
         run: |
-          source .env
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           docker build -t $DOCKER_USERNAME/whenwhen:latest .
           docker push $DOCKER_USERNAME/whenwhen:latest
