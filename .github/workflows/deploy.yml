@@ -17,7 +17,9 @@ jobs:
       # .env 파일 생성
       - name: Load .env from GitHub Secrets
         run: |
-          echo -e "${{ secrets.ENV_FILE }}" > .env
+          cat << 'EOF' > .env
+          ${{ secrets.ENV_FILE }}
+          EOF
 
       # dotenv 설치 및 로드
       - name: Load environment variables
