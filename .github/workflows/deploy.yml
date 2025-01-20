@@ -22,7 +22,7 @@ jobs:
           source .env
           echo "EC2_HOST=$EC2_HOST" >> $GITHUB_ENV
           echo "EC2_USER=$EC2_USER" >> $GITHUB_ENV
-          echo "$SSH_KEY_BASE64" | base64 -d > private_key
+          echo "$EC2_KEY_BASE64" | base64 -d > private_key
           chmod 600 private_key
 
         # JDK 설정
