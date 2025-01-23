@@ -56,6 +56,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
+          mkdir -p target
+          mv *.jar target/
           echo "${{ secrets.ENV_FILE }}" > .env
           source .env
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
