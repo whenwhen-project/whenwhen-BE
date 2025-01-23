@@ -89,6 +89,7 @@ jobs:
           key_path: private_key
           script: |
             echo "${{ secrets.ENV_FILE }}" > .env
+            source .env
             docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
             docker pull $DOCKER_USERNAME/whenwhen:latest
             docker stop whenwhen-container || true
