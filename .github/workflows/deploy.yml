@@ -23,6 +23,7 @@ jobs:
           echo "SSH_HOST=$SSH_HOST" >> $GITHUB_ENV
           echo "SSH_PORT=$SSH_PORT" >> $GITHUB_ENV
           echo "SSH_USER=$SSH_USER" >> $GITHUB_ENV
+          echo "SSH_KEY_PASSPHRASE=$SSH_KEY_PASSPHRASE" >> $GITHUB_ENV
           echo "$SSH_KEY_BASE64" | base64 -d > private_key
           chmod 600 private_key
 
@@ -53,6 +54,7 @@ jobs:
           host: ${{ env.SSH_HOST }}
           port: ${{ env.SSH_PORT }}
           username: ${{ env.SSH_USER }}
+          passphrase: ${{ env.SSH_KEY_PASSPHRASE }}
           key_path: private_key
           script: |
             echo "${{ secrets.ENV_FILE }}" > .env
@@ -66,4 +68,3 @@ jobs:
               --name whenwhen-container \
               --env-file .env \
               "$DOCKER_USERNAME/whenwhen:latest"
-            rm -f .env
