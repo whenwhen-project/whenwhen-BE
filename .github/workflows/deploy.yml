@@ -57,12 +57,12 @@ jobs:
           script: |
             echo "${{ secrets.ENV_FILE }}" > .env
             source .env
-            sudo docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-            sudo docker pull $DOCKER_USERNAME/whenwhen:latest
-            sudo docker stop whenwhen-container
-            sudo docker rm whenwhen-container
-            sudo docker run -d \
-              -p 8080:8080 \
-              --name whenwhen-container \
-              --env-file .env \
-              "$DOCKER_USERNAME/whenwhen:latest"
+            docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+            docker pull $DOCKER_USERNAME/whenwhen:latest
+            docker stop whenwhen-container || true
+            docker rm whenwhen-container || true
+            docker run -d \
+            -p 8080:8080 \
+            --name whenwhen-container \
+            --env-file .env \
+            "$DOCKER_USERNAME/whenwhen:latest"
