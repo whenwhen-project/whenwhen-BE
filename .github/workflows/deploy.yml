@@ -93,6 +93,7 @@ jobs:
             docker pull $DOCKER_USERNAME/whenwhen:latest
             docker stop whenwhen-container || true
             docker rm whenwhen-container || true
+            docker image prune -f || true
             docker run -d \
               -p 8080:8080 \
               --name whenwhen-container \
