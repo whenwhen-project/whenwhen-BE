@@ -19,8 +19,8 @@ public class KakaoAuthProvider {
     @Value("${kakao.auth.client-id}")
     private String clientId;
 
-    @Value("${kakao.auth.redirect-uri}")
-    private String redirectUri;
+    @Value("${base.url}")
+    private String baseUrl;
 
     @Value("${kakao.auth.scope}")
     private String scope;
@@ -29,7 +29,7 @@ public class KakaoAuthProvider {
         return "https://kauth.kakao.com/oauth/authorize"
                 + "?response_type=code"
                 + "&client_id=" + clientId
-                + "&redirect_uri=" + redirectUri
+                + "&redirect_uri=" + baseUrl + "kakao/auth/callback"
                 + "&scope=" + scope;
     }
 
@@ -46,7 +46,7 @@ public class KakaoAuthProvider {
                 .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                 .bodyValue("grant_type=authorization_code"
                         + "&client_id=" + clientId
-                        + "&redirect_uri=" + redirectUri
+                        + "&redirect_uri=" + baseUrl + "kakao/auth/callback"
                         + "&code=" + code)
                 .retrieve()
                 .bodyToMono(Map.class)
