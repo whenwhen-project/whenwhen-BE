@@ -1,5 +1,6 @@
 package com.example.whenwhen.service;
 
+import com.example.whenwhen.dto.KakaoTokenResponse;
 import com.example.whenwhen.dto.LoginResponseDto;
 import com.example.whenwhen.entity.RefreshToken;
 import com.example.whenwhen.entity.User;
@@ -22,15 +23,17 @@ public class AuthService {
     /**
      * 카카오 로그인, 회원가입을 처리
      * @param code 클라이언트로부터 받은 카카오 인가 코드
-     * @return {@link LoginResponseDto} 반환
+     * @return {@link LoginResponseDto}
      */
     @Transactional
     public LoginResponseDto handleKakaoCallback(String code) {
-        // 1. 카카오 액세스 토큰 획득
-        Map<String, Object> kakaoAccessToken = kakaoAuthProvider.getKakaoToken(code);
-        String idToken = (String) kakaoAccessToken.get("id_token");
+        // 1. 카카오 토큰 획득
+        KakaoTokenResponse kakaoToken = kakaoAuthProvider.getKakaoToken(code);
+        String idToken = kakaoToken.getId_token();
 
-        // 2. 카카오 액세스 토큰 내 ID token에서 사용자 정보를 decode
+        System.out.println(idToken);
+
+        // 2. 카카오 ID token에서 사용자 정보를 decode
         Map<String, Object> userInfo = kakaoAuthProvider.decodeIdTokenToUserInfo(idToken);
 
         String sub = (String) userInfo.get("sub");
