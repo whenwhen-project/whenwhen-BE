@@ -22,7 +22,7 @@ public class KakaoAuthProvider {
     @Value("${base.url}")
     private String baseUrl;
 
-    @Value("{auth.kakao.sub-url}")
+    @Value("${auth.kakao.sub-url}")
     private String subUrl;
 
     @Value("${auth.kakao.scope}")
