@@ -6,12 +6,14 @@ import com.example.whenwhen.entity.Event;
 import com.example.whenwhen.entity.EventDate;
 import com.example.whenwhen.repository.EventDateRepository;
 import com.example.whenwhen.repository.EventRepository;
-import com.example.whenwhen.util.CodeGenerator;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +22,16 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventDateRepository eventDateRepository;
 
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final int CODE_LENGTH = 8; // 코드 길이
+    private static final Random RANDOM = new SecureRandom();
+
     // Event, EventDate 생성
     @Transactional
     public EventResponseDto createEvent(EventRequestDto requestDto) {
         String randomCode;
         do {
-            randomCode = CodeGenerator.generateRandomCode();
+            randomCode = generateRandomCode();
         } while (eventRepository.existsByCode(randomCode)); // 중복 검사
 
         Event event = Event.builder()
@@ -66,5 +72,13 @@ public class EventService {
                 .dates(eventDateRepository.getAllByEvent(event).stream().map(EventDate::getDate).toList())
                 .status(event.getStatus())
                 .build();
+    }
+
+    private String generateRandomCode() {
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < CODE_LENGTH; i++) {
+            code.append(CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length())));
+        }
+        return code.toString();
     }
 }

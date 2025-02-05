@@ -1,4 +1,4 @@
-package com.example.whenwhen.initializer;
+package com.example.whenwhen.config;
 
 import com.example.whenwhen.entity.User;
 import com.example.whenwhen.repository.UserRepository;
