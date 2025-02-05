@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-public class JwtTokenProvider {
+public class JwtProvider {
 
     @Value("${jwt.secret}")
     private String secret;
@@ -44,14 +44,15 @@ public class JwtTokenProvider {
     }
 
     // 토큰 검증 및 사용자 ID 추출
-    public String validateAndExtractUserId(String token) {
+    public Long validateTokenAndExtractUserId(String token) {
         try {
-            return Jwts.parser()
+            String sub = Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload()
                     .getSubject();
+            return Long.parseLong(sub);
         } catch (ExpiredJwtException e) {
             throw new IllegalArgumentException("토큰이 만료되었습니다.", e);
         } catch (SignatureException e) {
