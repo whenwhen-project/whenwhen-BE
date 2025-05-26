@@ -83,7 +83,7 @@ jobs:
           host: ${{ env.SSH_HOST }}
           port: ${{ env.SSH_PORT }}
           username: ${{ env.SSH_USER }}
-          key: private_key
+          key_path: private_key
           source: "whenwhen.tar"
           target: "~"
 
