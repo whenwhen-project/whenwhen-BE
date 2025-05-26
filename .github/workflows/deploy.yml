@@ -1,10 +1,11 @@
-name: Build and Deploy to EC2
+name: Build and Deploy
 
 on:
   push:
     branches:
       - main
       - feat/kakao-login
+      - feat/user
 
 jobs:
   # 1. build job
@@ -54,15 +55,37 @@ jobs:
         with:
           name: jar-file
 
-      - name: Build and Push Docker Image
+      - name: Prepare for Docker build
         run: |
           mkdir -p target
-          mv *.jar target/
+          mv *.jar target/app.jar
+
+      - name: Load .env and export variables
+        run: |
           echo "${{ secrets.ENV_FILE }}" > .env
           source .env
-          docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-          docker build -t $DOCKER_USERNAME/whenwhen:latest .
-          docker push $DOCKER_USERNAME/whenwhen:latest
+          echo "SSH_HOST=$SSH_HOST" >> $GITHUB_ENV
+          echo "SSH_PORT=$SSH_PORT" >> $GITHUB_ENV
+          echo "SSH_USER=$SSH_USER" >> $GITHUB_ENV
+          echo "$SSH_KEY_BASE64" | base64 -d > private_key
+          chmod 600 private_key
+
+      - name: Build Docker Image
+        run: docker build -t whenwhen:latest .
+
+      - name: Save Docker Image to tar
+        run: docker save whenwhen:latest -o whenwhen.tar
+
+
+      - name: Transfer Docker Image to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ env.SSH_HOST }}
+          port: ${{ env.SSH_PORT }}
+          username: ${{ env.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "whenwhen.tar"
+          target: "~"
 
 
   # 3. deploy job
@@ -89,9 +112,7 @@ jobs:
           key_path: private_key
           script: |
             echo "${{ secrets.ENV_FILE }}" > .env
-            source .env
-            docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-            docker pull $DOCKER_USERNAME/whenwhen:latest
+            docker load -i ~/whenwhen.tar
             docker stop whenwhen-container || true
             docker rm whenwhen-container || true
             docker image prune -f || true
@@ -99,5 +120,5 @@ jobs:
               -p 8080:8080 \
               --name whenwhen-container \
               --env-file .env \
-              "$DOCKER_USERNAME/whenwhen:latest"
-            rm -f .env
+              whenwhen:latest
+            rm -f ~/whenwhen.tar .env
