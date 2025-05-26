@@ -58,7 +58,7 @@ jobs:
       - name: Prepare for Docker build
         run: |
           mkdir -p target
-          mv *.jar target/app.jar
+          mv *.jar target/whenwhen-0.0.1.jar
 
       - name: Load .env and export variables
         run: |
