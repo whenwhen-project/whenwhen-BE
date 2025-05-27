@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Build JAR File (Test)
+      - name: Build JAR File
         run: mvn clean package -DskipTests
 
       - name: Load .env and export variables
@@ -50,9 +50,9 @@ jobs:
           SSH_HOST: ${{ env.SSH_HOST }}
           SSH_PORT: ${{ env.SSH_PORT }}
 
-      - name: Transfer Docker image via rsync
+      - name: Transfer Docker image via SCP
         run: |
-          rsync -avz -e "ssh -i private_key -p $SSH_PORT" whenwhen.tar $SSH_USER@$SSH_HOST:~/
+          scp -i private_key -P $SSH_PORT whenwhen.tar $SSH_USER@$SSH_HOST:~/
         env:
           SSH_HOST: ${{ env.SSH_HOST }}
           SSH_PORT: ${{ env.SSH_PORT }}
