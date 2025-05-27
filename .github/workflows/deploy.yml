@@ -8,8 +8,7 @@ on:
       - feat/user
 
 jobs:
-  # 1. build job (optional - 빌드 테스트용)
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,12 +23,6 @@ jobs:
       - name: Build JAR File (Test)
         run: mvn clean package -DskipTests
 
-
-  # 2. deploy job
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Load .env and export variables
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
@@ -40,6 +33,23 @@ jobs:
           echo "$SSH_KEY_BASE64" | base64 -d > private_key
           chmod 600 private_key
 
+      - name: Build Docker image
+        run: docker build -t whenwhen:latest .
+
+      - name: Save Docker image to tar
+        run: docker save whenwhen:latest -o whenwhen.tar
+
+      - name: Install rsync (if needed)
+        run: sudo apt-get update && sudo apt-get install -y rsync
+
+      - name: Transfer Docker image via rsync
+        run: |
+          rsync -avz -e "ssh -i private_key -p $SSH_PORT" whenwhen.tar $SSH_USER@$SSH_HOST:~/
+        env:
+          SSH_HOST: ${{ env.SSH_HOST }}
+          SSH_PORT: ${{ env.SSH_PORT }}
+          SSH_USER: ${{ env.SSH_USER }}
+
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -48,16 +58,13 @@ jobs:
           username: ${{ env.SSH_USER }}
           key_path: private_key
           script: |
-            echo "${{ secrets.ENV_FILE }}" > ~/app/.env
+            echo "${{ secrets.ENV_FILE }}" > .env
 
-            cd ~/app || git clone https://github.com/whenwhen-project/whenwhen-BE.git ~/app && cd ~/app
-
-            git pull origin main
+            docker load -i ~/whenwhen.tar
 
             docker stop whenwhen-container || true
             docker rm whenwhen-container || true
-
-            docker build -t whenwhen:latest .
+            docker image prune -f || true
 
             docker run -d \
               -p 8080:8080 \
@@ -65,4 +72,4 @@ jobs:
               --env-file .env \
               whenwhen:latest
 
-            rm -f .env
+            rm -f ~/whenwhen.tar .env
