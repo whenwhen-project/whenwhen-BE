@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feat/kakao-login
+      - feat/user
 
 jobs:
   # 1. build job
