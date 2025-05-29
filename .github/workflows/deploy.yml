@@ -1,28 +1,18 @@
-name: Build and Deploy to EC2
+name: Build and Deploy
 
 on:
   push:
     branches:
       - main
       - feat/kakao-login
+      - feat/user
 
 jobs:
-  # 1. build job
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Load .env and export variables
-        run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
-          source .env
-          echo "SSH_HOST=$SSH_HOST" >> $GITHUB_ENV
-          echo "SSH_PORT=$SSH_PORT" >> $GITHUB_ENV
-          echo "SSH_USER=$SSH_USER" >> $GITHUB_ENV
-          echo "$SSH_KEY_BASE64" | base64 -d > private_key
-          chmod 600 private_key
 
       - name: set up JDK 21
         uses: actions/setup-java@v4
@@ -31,45 +21,8 @@ jobs:
           java-version: '21'
 
       - name: Build JAR File
-        run: |
-          mvn clean package -DskipTests
+        run: mvn clean package -DskipTests
 
-      - name: Upload JAR artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: jar-file
-          path: target/*.jar
-
-
-  # 2. docker build & push job
-  docker:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: jar-file
-
-      - name: Build and Push Docker Image
-        run: |
-          mkdir -p target
-          mv *.jar target/
-          echo "${{ secrets.ENV_FILE }}" > .env
-          source .env
-          docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-          docker build -t $DOCKER_USERNAME/whenwhen:latest .
-          docker push $DOCKER_USERNAME/whenwhen:latest
-
-
-  # 3. deploy job
-  deploy:
-    runs-on: ubuntu-latest
-    needs: docker
-    steps:
       - name: Load .env and export variables
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
@@ -80,7 +33,32 @@ jobs:
           echo "$SSH_KEY_BASE64" | base64 -d > private_key
           chmod 600 private_key
 
-      - name: Deploy to Server
+      - name: Build Docker image
+        run: docker build -t whenwhen:latest .
+
+      - name: Save Docker image to tar
+        run: docker save whenwhen:latest -o whenwhen.tar
+
+      - name: Install rsync (if needed)
+        run: sudo apt-get update && sudo apt-get install -y rsync
+
+      - name: Add SSH host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p $SSH_PORT $SSH_HOST >> ~/.ssh/known_hosts
+        env:
+          SSH_HOST: ${{ env.SSH_HOST }}
+          SSH_PORT: ${{ env.SSH_PORT }}
+
+      - name: Transfer Docker image via rsync
+        run: |
+          rsync -avz -e "ssh -i private_key -p $SSH_PORT" whenwhen.tar $SSH_USER@$SSH_HOST:~/
+        env:
+          SSH_HOST: ${{ env.SSH_HOST }}
+          SSH_PORT: ${{ env.SSH_PORT }}
+          SSH_USER: ${{ env.SSH_USER }}
+
+      - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.SSH_HOST }}
@@ -89,15 +67,17 @@ jobs:
           key_path: private_key
           script: |
             echo "${{ secrets.ENV_FILE }}" > .env
-            source .env
-            docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-            docker pull $DOCKER_USERNAME/whenwhen:latest
+
+            docker load -i ~/whenwhen.tar
+
             docker stop whenwhen-container || true
             docker rm whenwhen-container || true
             docker image prune -f || true
+
             docker run -d \
               -p 8080:8080 \
               --name whenwhen-container \
               --env-file .env \
-              "$DOCKER_USERNAME/whenwhen:latest"
-            rm -f .env
+              whenwhen:latest
+
+            rm -f ~/whenwhen.tar .env
