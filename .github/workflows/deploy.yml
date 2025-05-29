@@ -50,9 +50,9 @@ jobs:
           SSH_HOST: ${{ env.SSH_HOST }}
           SSH_PORT: ${{ env.SSH_PORT }}
 
-      - name: Transfer Docker image via SCP
+      - name: Transfer Docker image via rsync
         run: |
-          scp -i private_key -P $SSH_PORT whenwhen.tar $SSH_USER@$SSH_HOST:~/
+          rsync -az -e "ssh -i private_key -p $SSH_PORT" whenwhen.tar $SSH_USER@$SSH_HOST:~/
         env:
           SSH_HOST: ${{ env.SSH_HOST }}
           SSH_PORT: ${{ env.SSH_PORT }}
