@@ -75,7 +75,7 @@ jobs:
             docker image prune -f || true
 
             docker run -d \
-              -p 8080:8080 \
+              -p 9000:9000 \
               --name whenwhen-container \
               --env-file .env \
               whenwhen:latest
